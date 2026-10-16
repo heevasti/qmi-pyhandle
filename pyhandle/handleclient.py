@@ -2,7 +2,6 @@
 This module provides the main client for the PYHANDLE
     library.
 '''
-from __future__ import absolute_import
 
 import logging
 import pyhandle

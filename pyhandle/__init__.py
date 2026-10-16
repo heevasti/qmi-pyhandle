@@ -1,5 +1,9 @@
-__version__ = "1.5.0"
-# The version as used in setup.py and docs/source/conf.py.
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("pyhandle")
+except PackageNotFoundError:
+    __version__ = "0+unknown"
 
 # IMPORTANT
 # Please put no comment above the __version__ variable,

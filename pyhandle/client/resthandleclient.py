@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import pyhandle
 import json
 import xml.etree.ElementTree as ET

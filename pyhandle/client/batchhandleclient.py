@@ -4,7 +4,6 @@ The batch file is executed by the hdl-genericbatch (hdl-genericbatch <batchfile>
 
 Author Sofiane Bendoukha (DKRZ), 2017.
 '''
-from __future__ import absolute_import
 
 import logging
 import os

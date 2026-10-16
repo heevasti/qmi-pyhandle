@@ -3,10 +3,7 @@ This module provides some handle-related functions
 that are needed across various modules of the
 pyhandle library.
 '''
-from __future__ import absolute_import
 import base64
-from future.standard_library import install_aliases
-install_aliases()
 from urllib.parse import quote
 from . import handleexceptions
 from . import util

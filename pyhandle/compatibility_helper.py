@@ -1,12 +1,11 @@
 import sys
-from six import string_types
 '''
 This module provides some helper functions to ease porting the codebase 
-     to Python 3.5..
+     to supported Python 3 versions.
 
 '''
 def check_response_content_type(response):
-    if isinstance(response.content, string_types):
+    if isinstance(response.content, str):
        return True
 
 def decoded_response(response):

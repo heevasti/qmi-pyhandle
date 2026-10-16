@@ -3,7 +3,6 @@ This class provides different methods to manage Handles using the database inter
 
 Author: Sofiane Bendoukha (DKRZ), 2017
 """
-from __future__ import absolute_import
 
 import binascii
 import codecs

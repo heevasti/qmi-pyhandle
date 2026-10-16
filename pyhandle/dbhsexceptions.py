@@ -6,7 +6,6 @@ Author: Sofiane Bendoukha, DKRZ, 2016-2017
 
 '''
 
-from __future__ import absolute_import
 
 
 class DBHandleNotFoundException(Exception):
