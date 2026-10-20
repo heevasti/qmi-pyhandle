@@ -12,11 +12,10 @@ except PackageNotFoundError:
 # the package name, the next non-empty comment would be
 # printed as description).
 
-from . import clientcredentials
-from . import handleclient
+from . import clientcredentials, handleclient
 from .handleexceptions import *
 
 # Make sure that a single "import pyhandle" allows the use of
 # relevant submodules!
-# See 
+# See
 # https://github.com/psf/requests/blob/master/requests/__init__.py#L120
