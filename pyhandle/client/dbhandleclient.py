@@ -712,10 +712,7 @@ class DBHandleClient(HandleClient):
 
         admin_perm = hex(int(perm, 2))[2:]
 
-        if sys.version_info[0] >= 3:
-            admin_handle = codecs.encode(admin_handle.encode(), "hex").decode("UTF-8")
-        else:
-            admin_handle = admin_handle.encode("hex")
+        admin_handle = codecs.encode(admin_handle.encode(), "hex").decode("UTF-8")
 
         hsadmin_hex_value = "0" + admin_perm + "0000000f" + admin_handle + hsadmin_index
 

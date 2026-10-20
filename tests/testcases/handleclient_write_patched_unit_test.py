@@ -2,7 +2,6 @@
 by patching the get request to replace read access."""
 
 import json
-import sys
 import unittest
 
 import mock
@@ -117,72 +116,38 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
 
         # expected_payload = {"values": [{"index": 100, "type": "HS_ADMIN", "data": {"value": {"index": "200", "handle": "0.NA/my", "permissions": "011111110011"}, "format": "admin"}}, {"index": 1, "type": "URL", "data": "http://foo.bar"}, {"index": 4, "type": "CHECKSUM", "data": "123456"}, {"index": 2, "type": "FOO", "data": "foo"}, {"index": 3, "type": "BAR", "data": "bar"}]}
 
-        if sys.version_info.major == 3 and sys.version_info.minor > 5:
-            expected_payload = {
-                "values": [
-                    {
-                        "index": 100,
-                        "type": "HS_ADMIN",
-                        "data": {
-                            "value": {
-                                "index": "200",
-                                "handle": "0.NA/my",
-                                "permissions": "011111110011",
-                            },
-                            "format": "admin",
+        expected_payload = {
+            "values": [
+                {
+                    "index": 100,
+                    "type": "HS_ADMIN",
+                    "data": {
+                        "value": {
+                            "index": "200",
+                            "handle": "0.NA/my",
+                            "permissions": "011111110011",
                         },
+                        "format": "admin",
                     },
-                    {"index": 2, "type": "FOO", "data": "foo"},
-                    {"index": 3, "type": "BAR", "data": "bar"},
-                    {"index": 1, "type": "URL", "data": "http://foo.bar"},
-                    {"index": 4, "type": "CHECKSUM", "data": "123456"},
-                ]
-            }
-            replace_timestamps(expected_payload)
-            self.assertIsNotNone(flattensort(passed_payload))
-            self.assertIsNotNone(flattensort(expected_payload))
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="register_handle",
-                ),
-            )
-        elif sys.version_info.major == 2 and sys.version_info.minor > 6:
-            expected_payload = {
-                "values": [
-                    {
-                        "index": 100,
-                        "type": "HS_ADMIN",
-                        "data": {
-                            "value": {
-                                "index": "200",
-                                "handle": "0.NA/my",
-                                "permissions": "011111110011",
-                            },
-                            "format": "admin",
-                        },
-                    },
-                    {"index": 1, "type": "URL", "data": "http://foo.bar"},
-                    {"index": 2, "type": "CHECKSUM", "data": "123456"},
-                    {"index": 3, "type": "FOO", "data": "foo"},
-                    {"index": 4, "type": "BAR", "data": "bar"},
-                ]
-            }
-            replace_timestamps(expected_payload)
-            self.assertIsNotNone(flattensort(passed_payload))
-            self.assertIsNotNone(flattensort(expected_payload))
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="register_handle",
-                ),
-            )
+                },
+                {"index": 2, "type": "FOO", "data": "foo"},
+                {"index": 3, "type": "BAR", "data": "bar"},
+                {"index": 1, "type": "URL", "data": "http://foo.bar"},
+                {"index": 4, "type": "CHECKSUM", "data": "123456"},
+            ]
+        }
+        replace_timestamps(expected_payload)
+        self.assertIsNotNone(flattensort(passed_payload))
+        self.assertIsNotNone(flattensort(expected_payload))
+        self.assertEqual(
+            flattensort(passed_payload),
+            flattensort(expected_payload),
+            failure_message(
+                expected=expected_payload,
+                passed=passed_payload,
+                methodname="register_handle",
+            ),
+        )
 
     @mock.patch("pyhandle.handlesystemconnector.requests.Session.put")
     @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
@@ -217,40 +182,39 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         passed_payload, _ = self.get_payload_headers_from_mockresponse(putpatch)
 
         # Compare with expected payload:
-        if sys.version_info.major == 3 and sys.version_info.minor != 5:
-            expected_payload = {
-                "values": [
-                    {
-                        "index": 100,
-                        "type": "HS_ADMIN",
-                        "data": {
-                            "value": {
-                                "index": "200",
-                                "handle": "0.NA/my",
-                                "permissions": "011111110011",
-                            },
-                            "format": "admin",
+        expected_payload = {
+            "values": [
+                {
+                    "index": 100,
+                    "type": "HS_ADMIN",
+                    "data": {
+                        "value": {
+                            "index": "200",
+                            "handle": "0.NA/my",
+                            "permissions": "011111110011",
                         },
+                        "format": "admin",
                     },
-                    {"index": 1, "type": "URL", "data": "http://foo.bar"},
-                    {"index": 2, "type": "CHECKSUM", "data": "123456"},
-                    {"index": 3, "type": "FOO", "data": "foo"},
-                    {"index": 4, "type": "BAR", "data": "bar"},
-                ]
-            }
-            # expected_payload = {"values": [{"index": 100, "type": "HS_ADMIN", "data": {"value": {"index": "200", "handle": "0.NA/my", "permissions": "011111110011"}, "format": "admin"}}, {"index": 1, "type": "URL", "data": "http://foo.bar"}, {"index": 4, "type": "CHECKSUM", "data": "123456"}, {"index": 2, "type": "FOO", "data": "foo"}, {"index": 3, "type": "BAR", "data": "bar"}]}
-            replace_timestamps(expected_payload)
-            self.assertIsNotNone(flattensort(passed_payload))
-            self.assertIsNotNone(flattensort(expected_payload))
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="register_handle",
-                ),
-            )
+                },
+                {"index": 1, "type": "URL", "data": "http://foo.bar"},
+                {"index": 2, "type": "CHECKSUM", "data": "123456"},
+                {"index": 3, "type": "FOO", "data": "foo"},
+                {"index": 4, "type": "BAR", "data": "bar"},
+            ]
+        }
+        # expected_payload = {"values": [{"index": 100, "type": "HS_ADMIN", "data": {"value": {"index": "200", "handle": "0.NA/my", "permissions": "011111110011"}, "format": "admin"}}, {"index": 1, "type": "URL", "data": "http://foo.bar"}, {"index": 4, "type": "CHECKSUM", "data": "123456"}, {"index": 2, "type": "FOO", "data": "foo"}, {"index": 3, "type": "BAR", "data": "bar"}]}
+        replace_timestamps(expected_payload)
+        self.assertIsNotNone(flattensort(passed_payload))
+        self.assertIsNotNone(flattensort(expected_payload))
+        self.assertEqual(
+            flattensort(passed_payload),
+            flattensort(expected_payload),
+            failure_message(
+                expected=expected_payload,
+                passed=passed_payload,
+                methodname="register_handle",
+            ),
+        )
 
     @mock.patch("pyhandle.handlesystemconnector.requests.Session.put")
     @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
@@ -483,72 +447,38 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         # Changed order/index: old one
         # expected_payload = {"values": [{"index": 100, "type": "HS_ADMIN", "data": {"value": {"index": 300, "handle": "handle/owner", "permissions": "011111110011"}, "format": "admin"}}, {"index": 1, "type": "URL", "data": "http://foo.bar"}, {"index": 4, "type": "CHECKSUM", "data": "123456"}, {"index": 2, "type": "FOO", "data": "foo"}, {"index": 3, "type": "BAR", "data": "bar"}]}
 
-        if sys.version_info.major == 3 and sys.version_info.minor > 5:
-            expected_payload = {
-                "values": [
-                    {
-                        "index": 100,
-                        "type": "HS_ADMIN",
-                        "data": {
-                            "value": {
-                                "index": 300,
-                                "handle": "handle/owner",
-                                "permissions": "011111110011",
-                            },
-                            "format": "admin",
+        expected_payload = {
+            "values": [
+                {
+                    "index": 100,
+                    "type": "HS_ADMIN",
+                    "data": {
+                        "value": {
+                            "index": 300,
+                            "handle": "handle/owner",
+                            "permissions": "011111110011",
                         },
+                        "format": "admin",
                     },
-                    {"index": 2, "type": "FOO", "data": "foo"},
-                    {"index": 3, "type": "BAR", "data": "bar"},
-                    {"index": 1, "type": "URL", "data": "http://foo.bar"},
-                    {"index": 4, "type": "CHECKSUM", "data": "123456"},
-                ]
-            }
-            replace_timestamps(expected_payload)
-            self.assertIsNotNone(flattensort(passed_payload))
-            self.assertIsNotNone(flattensort(expected_payload))
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="register_handle",
-                ),
-            )
-        elif sys.version_info.major == 2 and sys.version_info.minor >= 7:
-            expected_payload = {
-                "values": [
-                    {
-                        "index": 100,
-                        "type": "HS_ADMIN",
-                        "data": {
-                            "value": {
-                                "index": 300,
-                                "handle": "handle/owner",
-                                "permissions": "011111110011",
-                            },
-                            "format": "admin",
-                        },
-                    },
-                    {"index": 1, "type": "URL", "data": "http://foo.bar"},
-                    {"index": 2, "type": "CHECKSUM", "data": "123456"},
-                    {"index": 3, "type": "FOO", "data": "foo"},
-                    {"index": 4, "type": "BAR", "data": "bar"},
-                ]
-            }
-            replace_timestamps(expected_payload)
-            self.assertIsNotNone(flattensort(passed_payload))
-            self.assertIsNotNone(flattensort(expected_payload))
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="register_handle",
-                ),
-            )
+                },
+                {"index": 2, "type": "FOO", "data": "foo"},
+                {"index": 3, "type": "BAR", "data": "bar"},
+                {"index": 1, "type": "URL", "data": "http://foo.bar"},
+                {"index": 4, "type": "CHECKSUM", "data": "123456"},
+            ]
+        }
+        replace_timestamps(expected_payload)
+        self.assertIsNotNone(flattensort(passed_payload))
+        self.assertIsNotNone(flattensort(expected_payload))
+        self.assertEqual(
+            flattensort(passed_payload),
+            flattensort(expected_payload),
+            failure_message(
+                expected=expected_payload,
+                passed=passed_payload,
+                methodname="register_handle",
+            ),
+        )
 
     @mock.patch("pyhandle.handlesystemconnector.requests.Session.put")
     @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
@@ -628,84 +558,44 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         # Different indizes:
         # expected_payload = {"values": [{"index": 100, "type": "HS_ADMIN", "data": {"value": {"index": "200", "handle": "0.NA/my", "permissions": "011111110011"}, "format": "admin"}}, {"index": 1, "type": "URL", "data": "http://foo.bar"}, {"index": 4, "type": "CHECKSUM", "data": "123456"}, {"index": 2, "type": "FOO", "data": "foo"}, {"index": 3, "type": "BAR", "data": "bar"}]}
 
-        if sys.version_info.major == 3 and sys.version_info.minor > 5:
-            expected_payload = {
-                "values": [
-                    {
-                        "index": 100,
-                        "type": "HS_ADMIN",
-                        "data": {
-                            "value": {
-                                "index": "200",
-                                "handle": "0.NA/my",
-                                "permissions": "011111110011",
-                            },
-                            "format": "admin",
+        expected_payload = {
+            "values": [
+                {
+                    "index": 100,
+                    "type": "HS_ADMIN",
+                    "data": {
+                        "value": {
+                            "index": "200",
+                            "handle": "0.NA/my",
+                            "permissions": "011111110011",
                         },
+                        "format": "admin",
                     },
-                    {"index": 2, "type": "FOO", "data": "foo"},
-                    {"index": 3, "type": "BAR", "data": "bar"},
-                    {"index": 1, "type": "URL", "data": "http://foo.bar"},
-                    {"index": 4, "type": "CHECKSUM", "data": "123456"},
-                ]
-            }
-            replace_timestamps(expected_payload)
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="register_handle",
-                ),
-            )
-            self.assertIsNotNone(flattensort(passed_payload))
-            self.assertIsNotNone(flattensort(expected_payload))
-            # Check if requests.put received an authorization header:
-            self.assertIn(
-                "Authorization",
-                passed_headers,
-                "Authorization header not passed: " + str(passed_headers),
-            )
-        elif sys.version_info.major == 2 and sys.version_info.minor > 6:
-            expected_payload = {
-                "values": [
-                    {
-                        "index": 100,
-                        "type": "HS_ADMIN",
-                        "data": {
-                            "value": {
-                                "index": "200",
-                                "handle": "0.NA/my",
-                                "permissions": "011111110011",
-                            },
-                            "format": "admin",
-                        },
-                    },
-                    {"index": 1, "type": "URL", "data": "http://foo.bar"},
-                    {"index": 2, "type": "CHECKSUM", "data": "123456"},
-                    {"index": 3, "type": "FOO", "data": "foo"},
-                    {"index": 4, "type": "BAR", "data": "bar"},
-                ]
-            }
-            replace_timestamps(expected_payload)
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="register_handle",
-                ),
-            )
-            self.assertIsNotNone(flattensort(passed_payload))
-            self.assertIsNotNone(flattensort(expected_payload))
-            # Check if requests.put received an authorization header:
-            self.assertIn(
-                "Authorization",
-                passed_headers,
-                "Authorization header not passed: " + str(passed_headers),
-            )
+                },
+                {"index": 2, "type": "FOO", "data": "foo"},
+                {"index": 3, "type": "BAR", "data": "bar"},
+                {"index": 1, "type": "URL", "data": "http://foo.bar"},
+                {"index": 4, "type": "CHECKSUM", "data": "123456"},
+            ]
+        }
+        replace_timestamps(expected_payload)
+        self.assertEqual(
+            flattensort(passed_payload),
+            flattensort(expected_payload),
+            failure_message(
+                expected=expected_payload,
+                passed=passed_payload,
+                methodname="register_handle",
+            ),
+        )
+        self.assertIsNotNone(flattensort(passed_payload))
+        self.assertIsNotNone(flattensort(expected_payload))
+        # Check if requests.put received an authorization header:
+        self.assertIn(
+            "Authorization",
+            passed_headers,
+            "Authorization header not passed: " + str(passed_headers),
+        )
 
     # generate_and_register_handle
 
@@ -926,26 +816,17 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
             "Authorization": "Basic OTk5JTNBdXNlci9uYW1lOmFwYXNzd29yZA==",
             "Content-Type": "application/json",
         }
-        if not (sys.version_info.major == 3 and sys.version_info.minor == 5):
-            putpatch.assert_called_with(
-                url, data=payload, headers=head, verify=True, allow_redirects=False
-            )
-        else:
-            # In Python 3.5 sorting dictionaries is a problem. But the only thing that matters is the url, so we
-            # test only that:
-            rec_args = putpatch.call_args
-            self.assertTrue(
-                rec_args[0][0]
-                == "http://handle.server/api/handles/my/testhandle?index=4&overwrite=true"
-            )
-            # print(rec_args[0])    # positional args: ('http://handle.server/api/handles/my/testhandle?index=4&overwrite=true',)
-            # print(rec_args[1])    # kwargs
-            # specific:
-            # print(rec_args[0][0])                 # http://handle.server/api/handles/my/testhandle?index=4&overwrite=true
-            # print(rec_args[1]['allow_redirects']) # False
-            # print(rec_args[1]['data'])            # {"values": [{"ttl": 86400, "data": "newvalue", "index": 4, "type": "TEST4"}]}
-            # print(rec_args[1]['headers'])         # {'Authorization': 'Basic OTk5JTNBdXNlci9uYW1lOmFwYXNzd29yZA==', 'Content-Type': 'application/json'}
-            # print(rec_args[1]['verify'])          # True
+        putpatch.assert_called_with(
+            url, data=payload, headers=head, verify=True, allow_redirects=False
+        )
+        # print(rec_args[0])    # positional args: ('http://handle.server/api/handles/my/testhandle?index=4&overwrite=true',)
+        # print(rec_args[1])    # kwargs
+        # specific:
+        # print(rec_args[0][0])                 # http://handle.server/api/handles/my/testhandle?index=4&overwrite=true
+        # print(rec_args[1]['allow_redirects']) # False
+        # print(rec_args[1]['data'])            # {"values": [{"ttl": 86400, "data": "newvalue", "index": 4, "type": "TEST4"}]}
+        # print(rec_args[1]['headers'])         # {'Authorization': 'Basic OTk5JTNBdXNlci9uYW1lOmFwYXNzd29yZA==', 'Content-Type': 'application/json'}
+        # print(rec_args[1]['verify'])          # True
 
         # Get the payload passed to "requests.put"
         passed_payload, _ = self.get_payload_headers_from_mockresponse(putpatch)
@@ -1339,46 +1220,25 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
 
         # Compare with expected payload:
 
-        if sys.version_info.major == 3 and sys.version_info.minor > 5:
-            expected_payload = {
-                "values": [
-                    {"data": "new100", "index": 2, "type": "TEST100"},
-                    {"data": "new2", "ttl": 86400, "index": 2222, "type": "TEST2"},
-                    {"data": "new4", "ttl": 86400, "index": 4, "type": "TEST4"},
-                    {"data": "new101", "index": 3, "type": "TEST101"},
-                ]
-            }
-            expected_payload.get("values", {})
-            replace_timestamps(expected_payload)
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="modify_handle_value",
-                ),
-            )
-        elif sys.version_info.major == 2 and sys.version_info.minor > 6:
-            expected_payload = {
-                "values": [
-                    {"index": 2, "type": "TEST100", "data": "new100"},
-                    {"index": 2222, "ttl": 86400, "type": "TEST2", "data": "new2"},
-                    {"index": 4, "ttl": 86400, "type": "TEST4", "data": "new4"},
-                    {"index": 3, "type": "TEST101", "data": "new101"},
-                ]
-            }
-            expected_payload.get("values", {})
-            replace_timestamps(expected_payload)
-            self.assertEqual(
-                flattensort(passed_payload),
-                flattensort(expected_payload),
-                failure_message(
-                    expected=expected_payload,
-                    passed=passed_payload,
-                    methodname="modify_handle_value",
-                ),
-            )
+        expected_payload = {
+            "values": [
+                {"data": "new100", "index": 2, "type": "TEST100"},
+                {"data": "new2", "ttl": 86400, "index": 2222, "type": "TEST2"},
+                {"data": "new4", "ttl": 86400, "index": 4, "type": "TEST4"},
+                {"data": "new101", "index": 3, "type": "TEST101"},
+            ]
+        }
+        expected_payload.get("values", {})
+        replace_timestamps(expected_payload)
+        self.assertEqual(
+            flattensort(passed_payload),
+            flattensort(expected_payload),
+            failure_message(
+                expected=expected_payload,
+                passed=passed_payload,
+                methodname="modify_handle_value",
+            ),
+        )
 
     @mock.patch("pyhandle.handlesystemconnector.requests.Session.put")
     @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")

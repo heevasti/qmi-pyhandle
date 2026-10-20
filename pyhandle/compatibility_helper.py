@@ -1,7 +1,5 @@
-import sys
-
 """
-This module provides some helper functions to ease porting the codebase 
+This module provides some helper functions to ease porting the codebase
      to supported Python 3 versions.
 
 """
@@ -19,8 +17,4 @@ def decoded_response(response):
 
 
 def set_encoding_variable():
-    if sys.version_info > (3, 0):
-        encoding_value = "unicode"
-    else:
-        encoding_value = "utf-8"
-    return encoding_value
+    return "unicode"
