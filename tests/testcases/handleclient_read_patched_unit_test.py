@@ -4,8 +4,6 @@ by providing a handle record to replace read access."""
 import json
 import unittest
 
-from past.builtins import long
-
 import pyhandle
 from pyhandle.client.resthandleclient import RESTHandleClient
 from pyhandle.utilhandle import check_handle_syntax
@@ -64,7 +62,7 @@ class RESTHandleClientReadaccessFakedTestCase(unittest.TestCase):
         syntax_ok = check_handle_syntax(val["handle"])
         self.assertTrue(syntax_ok, "The handle in HS_ADMIN is not well-formatted.")
         self.assertIsInstance(
-            val["index"], (int, long), "The index of the HS_ADMIN is not an integer."
+            val["index"], int, "The index of the HS_ADMIN is not an integer."
         )
         self.assertEqual(
             str(val["permissions"]).replace("0", "").replace("1", ""),

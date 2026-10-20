@@ -133,7 +133,7 @@ class ReverseLookupException(PyhandleBaseException):
             self.msg += "\n\tQuery: " + self.query
 
         if self.response is not None:
-            pat = re.compile(">[\s]+<")
+            pat = re.compile(r">[\s]+<")
             responsecontent_less_whitespace = pat.sub("><", str(self.response.content))
             self.msg += "\n\tURL: " + str(self.response.request.url)
             self.msg += "\n\tHTTP Status Code: " + str(self.response.status_code)

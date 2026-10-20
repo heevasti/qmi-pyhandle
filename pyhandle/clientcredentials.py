@@ -62,7 +62,7 @@ class PIDClientCredentials(object):
         return instance
 
     def __init__(self, **args):
-        """
+        r"""
         Initialize client credentials instance.
 
         The constructor checks if enough arguments are passed to
@@ -100,7 +100,7 @@ class PIDClientCredentials(object):
             retrieved by the user.
         :credentials_filename: This is the file location of the credentials file,
             if read from JSON. It is used to find the certificate/key files, if any.
-        :param \**args: Any other key-value pairs are stored and can be accessed
+        :param \*\*args: Any other key-value pairs are stored and can be accessed
             using 'get_config()'.
         :raises: :exc:`~pyhandle.handleexceptions.HandleSyntaxError`
         """

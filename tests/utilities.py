@@ -32,16 +32,16 @@ def replace_timestamps(jsonobject):
     """Replace timestamp values by "xxx" because their values do not matter."""
 
     # Replace:
-    if type(jsonobject) == type({}):
+    if type(jsonobject) is dict:
         if "timestamp" in jsonobject:
             jsonobject["timestamp"] = "xxx"
 
     # Recursion:
-    if type(jsonobject) == type({"b": 2}):
+    if type(jsonobject) is dict:
         for item in jsonobject.items():
             replace_timestamps(item)
 
-    elif type(jsonobject) == type([2, 2]) or type(jsonobject) == type((2, 2)):
+    elif type(jsonobject) in (list, tuple):
         for item in jsonobject:
             replace_timestamps(item)
 
@@ -90,7 +90,7 @@ def sort_lists(jsonobject):
     raise ValueError(msg)
 
     # Sort:
-    if type(jsonobject) == type([]):
+    if type(jsonobject) is list:
         sorted(jsonobject, key=lambda x: sorted(x.keys()))
         # Python 2.6.6:
         # sorted(iterable, cmp=None, key=None, reverse=False) --> new sorted list
@@ -100,11 +100,11 @@ def sort_lists(jsonobject):
         # reverse flag can be set to request the result in descending order.
 
     # Recursion:
-    if type(jsonobject) == type({"b": 2}):
+    if type(jsonobject) is dict:
         for item in jsonobject.items():
             sort_lists(item)
 
-    elif type(jsonobject) == type([2, 2]) or type(jsonobject) == type((2, 2)):
+    elif type(jsonobject) in (list, tuple):
         # TODO Isn't the first comparison bullshit, as lists are caught above?
         for item in jsonobject:
             sort_lists(item)
@@ -141,7 +141,7 @@ def flattensort(jsonobject):
     # Sorting a leave (end of recursion):
     # If it is a shallow, simple list, we can use sort().
 
-    if type(jsonobject) == type([]):
+    if type(jsonobject) is list:
         res = copy.deepcopy(jsonobject)
         # Why? The sort() can alter the list before failing, so
         # we must operate on a deep-copy.
@@ -193,7 +193,7 @@ def flattensort(jsonobject):
         return res
 
     # Dictionary: Recursion
-    if type(jsonobject) == type({"b": 2}):
+    if type(jsonobject) is dict:
         res = []
         for item in jsonobject.items():
             item = flattensort(item)
@@ -206,7 +206,7 @@ def flattensort(jsonobject):
         return res
 
     # Tuples: Recursion
-    elif type(jsonobject) == type((2, 2)):
+    elif type(jsonobject) is tuple:
         if not len(jsonobject) == 2:
             raise ValueError("Tuple of length %s, expected 2!")
 
@@ -218,11 +218,7 @@ def flattensort(jsonobject):
         return res
 
     # Simple types: Just return
-    try:
-        if isinstance(jsonobject, basestring):
-            return '"' + jsonobject + '"'
-    except NameError:
-        if isinstance(jsonobject, str):
-            return '"' + jsonobject + '"'
+    if isinstance(jsonobject, str):
+        return '"' + jsonobject + '"'
 
     return str(jsonobject)

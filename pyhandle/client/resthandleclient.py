@@ -667,7 +667,7 @@ class RESTHandleClient(HandleClient):
         # find indices to delete:
         keys = None
         indices = []
-        if type(key) != type([]):
+        if type(key) is not list:
             keys = [key]
         else:
             keys = key

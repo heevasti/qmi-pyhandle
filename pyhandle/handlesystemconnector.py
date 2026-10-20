@@ -645,7 +645,7 @@ class HandleSystemConnector(object):
         # Note: This is not required now, as several "index" values can be passed using "indices", but
         # TODO: I think we should through away "indices", as this is more elegant.
         if "index" in options:
-            if type(options["index"]) == type([]):
+            if type(options["index"]) is list:
                 for item in options["index"]:
                     url = url + separator + "index=" + str(item)
                     separator = "&"
@@ -653,7 +653,7 @@ class HandleSystemConnector(object):
 
         # Type can be passed several times:
         if "type" in options:
-            if type(options["type"]) == type([]):
+            if type(options["type"]) is list:
                 for item in options["type"]:
                     url = url + separator + "type=" + str(item)
                     separator = "&"
