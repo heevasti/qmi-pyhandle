@@ -13,7 +13,7 @@ import os
 
 import requests
 
-import pyhandle
+from pyhandle import hsresponses, util, utilhandle
 from pyhandle.compatibility_helper import decoded_response
 from pyhandle.handleexceptions import (
     CredentialsFormatError,
@@ -23,10 +23,10 @@ from pyhandle.handleexceptions import (
 )
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(pyhandle.util.NullHandler())
+LOGGER.addHandler(util.NullHandler())
 REQUESTLOGGER = logging.getLogger("log_all_requests_of_testcases_to_file")
 REQUESTLOGGER.propagate = False
-REQUESTLOGGER.addHandler(pyhandle.util.NullHandler())
+REQUESTLOGGER.addHandler(util.NullHandler())
 
 
 class HandleSystemConnector(object):
@@ -40,7 +40,7 @@ class HandleSystemConnector(object):
 
     def __init__(self, **args):
 
-        pyhandle.util.log_instantiation(
+        util.log_instantiation(
             LOGGER,
             "HandleSystemConnector",
             args,
@@ -58,7 +58,7 @@ class HandleSystemConnector(object):
             "certificate_only",
             "certificate_and_key",
         ]
-        pyhandle.util.add_missing_optional_args_with_value_none(args, optional_args)
+        util.add_missing_optional_args_with_value_none(args, optional_args)
 
         # Defaults for args:
         defaults = {
@@ -68,8 +68,6 @@ class HandleSystemConnector(object):
         }
 
         # Args that the constructor understands:
-        self.__handle_server_url = None
-        self.__REST_API_url_extension = None
         self.__HTTPS_verify = None
         self.__username = None
         self.__password = None
@@ -127,9 +125,7 @@ class HandleSystemConnector(object):
             )
 
         if args["HTTPS_verify"] is not None:
-            self.__HTTPS_verify = pyhandle.util.get_valid_https_verify(
-                args["HTTPS_verify"]
-            )
+            self.__HTTPS_verify = util.get_valid_https_verify(args["HTTPS_verify"])
             LOGGER.debug(" - https_verify set to: " + str(self.__HTTPS_verify))
         else:
             self.__HTTPS_verify = defaults["HTTPS_verify"]
@@ -201,6 +197,7 @@ class HandleSystemConnector(object):
             msg = (
                 'Unknown authentication method: "' + self.__authentication_method + '".'
             )
+            LOGGER.warning(msg)
             self.__has_write_access = False
 
         if self.__has_write_access:
@@ -211,7 +208,7 @@ class HandleSystemConnector(object):
     def __setup_for_auth_by_user_and_pw(self):
 
         # Check username:
-        pyhandle.utilhandle.check_handle_syntax_with_index(self.__username)
+        utilhandle.check_handle_syntax_with_index(self.__username)
         self.check_if_username_exists(self.__username)
 
         # Make Basic Auth String:
@@ -229,17 +226,21 @@ class HandleSystemConnector(object):
                 raise CredentialsFormatError(msg=msg)
 
         else:
-            self.__cert_object = (self.__certificate_only, self.__private_key)
+            certificate_only = self.__certificate_only
+            private_key = self.__private_key
+            # Only called when both files are set, see __check_and_set_authentication_method.
+            assert certificate_only is not None and private_key is not None
+            self.__cert_object = (certificate_only, private_key)
             msg = ""
-            if not os.path.isfile(self.__certificate_only):
+            if not os.path.isfile(certificate_only):
                 msg += (
                     "The certificate file was not found at the specified path: "
-                    + self.__certificate_only
+                    + certificate_only
                 )
-            if not os.path.isfile(self.__private_key):
+            if not os.path.isfile(private_key):
                 msg += (
                     "The private key file was not found at the specified path: "
-                    + self.__private_key
+                    + private_key
                 )
             if msg != "":
                 raise CredentialsFormatError(msg=msg)
@@ -289,7 +290,7 @@ class HandleSystemConnector(object):
         :param password: The password contained in the index of the username
             handle.
         """
-        auth = pyhandle.utilhandle.create_authentication_string(username, password)
+        auth = utilhandle.create_authentication_string(username, password)
         self.__basic_authentication_string = auth
 
     # API methods:
@@ -375,8 +376,8 @@ class HandleSystemConnector(object):
         # Check args:
         mandatory_args = ["handle", "list_of_entries"]
         optional_args = ["indices", "op", "overwrite"]
-        pyhandle.util.add_missing_optional_args_with_value_none(args, optional_args)
-        pyhandle.util.check_presence_of_mandatory_args(args, mandatory_args)
+        util.add_missing_optional_args_with_value_none(args, optional_args)
+        util.check_presence_of_mandatory_args(args, mandatory_args)
         handle = args["handle"]
         list_of_entries = args["list_of_entries"]
         indices = args["indices"]
@@ -394,11 +395,11 @@ class HandleSystemConnector(object):
 
         # Send request to server:
         resp = self.__send_put_request_to_server(url, payload, head, veri, handle)
-        if pyhandle.hsresponses.is_redirect_from_http_to_https(resp):
+        if hsresponses.is_redirect_from_http_to_https(resp):
             resp = self.__resend_put_request_on_302(payload, head, veri, handle, resp)
 
         # Check response for authentication issues:
-        if pyhandle.hsresponses.not_authenticated(resp):
+        if hsresponses.not_authenticated(resp):
             raise HandleAuthenticationError(
                 operation=op, handle=handle, response=resp, username=self.__username
             )
@@ -465,8 +466,8 @@ class HandleSystemConnector(object):
         # Check args:
         mandatory_args = ["handle"]
         optional_args = ["indices", "op"]
-        pyhandle.util.add_missing_optional_args_with_value_none(args, optional_args)
-        pyhandle.util.check_presence_of_mandatory_args(args, mandatory_args)
+        util.add_missing_optional_args_with_value_none(args, optional_args)
+        util.check_presence_of_mandatory_args(args, mandatory_args)
         handle = args["handle"]
         indices = args["indices"]
         op = args["op"]
@@ -508,7 +509,7 @@ class HandleSystemConnector(object):
         )
 
         # Check response for authentication issues:
-        if pyhandle.hsresponses.not_authenticated(resp):
+        if hsresponses.not_authenticated(resp):
             raise HandleAuthenticationError(
                 operation=op, handle=handle, response=resp, username=self.__username
             )
@@ -530,11 +531,11 @@ class HandleSystemConnector(object):
         """
         LOGGER.debug("check_if_username_exists...")
 
-        _, handle = pyhandle.utilhandle.remove_index_from_handle(username)
+        _, handle = utilhandle.remove_index_from_handle(username)
 
         resp = self.send_handle_get_request(handle)
         resp_content = decoded_response(resp)
-        if pyhandle.hsresponses.does_handle_exist(resp):
+        if hsresponses.does_handle_exist(resp):
             handlerecord_json = json.loads(resp_content)
             if not handlerecord_json["handle"] == handle:
                 raise GenericHandleError(
@@ -544,7 +545,7 @@ class HandleSystemConnector(object):
                     msg="The check returned a different handle than was asked for.",
                 )
             return True
-        elif pyhandle.hsresponses.handle_not_found(resp):
+        elif hsresponses.handle_not_found(resp):
             msg = "The username handle does not exist"
             raise HandleNotFoundException(handle=handle, msg=msg, response=resp)
         else:
@@ -577,7 +578,7 @@ class HandleSystemConnector(object):
                 header["Authorization"] = 'Handle clientCert="true"'
 
             elif self.__authentication_method == self.__auth_methods["user_pw"]:
-                header["Authorization"] = "Basic " + self.__basic_authentication_string
+                header["Authorization"] = f"Basic {self.__basic_authentication_string}"
 
             if action == "PUT":
                 header["Content-Type"] = content_type
@@ -669,9 +670,9 @@ class HandleSystemConnector(object):
 
         if len(options) > 0:
             for k, v in options.items():
-                if v == True:
+                if v is True:
                     v = "true"
-                elif v == False:
+                elif v is False:
                     v = "false"
                 url = url + separator + k + "=" + str(v)
                 separator = "&"
@@ -679,5 +680,5 @@ class HandleSystemConnector(object):
         return url
 
     def __log_request_response_to_file(self, **args):
-        message = pyhandle.utilhandle.make_request_log_message(**args)
+        message = utilhandle.make_request_log_message(**args)
         args["logger"].info(message)

@@ -13,7 +13,33 @@ except PackageNotFoundError:
 # printed as description).
 
 from . import clientcredentials, handleclient
-from .handleexceptions import *
+from .handleexceptions import (
+    BrokenHandleRecordException,
+    CredentialsFormatError,
+    GenericHandleError,
+    HandleAlreadyExistsException,
+    HandleAuthenticationError,
+    HandleNotFoundException,
+    HandleSyntaxError,
+    IllegalOperationException,
+    PyhandleBaseException,
+    ReverseLookupException,
+)
+
+__all__ = [
+    "clientcredentials",
+    "handleclient",
+    "BrokenHandleRecordException",
+    "CredentialsFormatError",
+    "GenericHandleError",
+    "HandleAlreadyExistsException",
+    "HandleAuthenticationError",
+    "HandleNotFoundException",
+    "HandleSyntaxError",
+    "IllegalOperationException",
+    "PyhandleBaseException",
+    "ReverseLookupException",
+]
 
 # Make sure that a single "import pyhandle" allows the use of
 # relevant submodules!

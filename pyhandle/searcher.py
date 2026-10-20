@@ -13,14 +13,14 @@ import re
 
 import requests
 
-import pyhandle
+from pyhandle import util, utilhandle
 from pyhandle.handleexceptions import ReverseLookupException
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(pyhandle.util.NullHandler())
+LOGGER.addHandler(util.NullHandler())
 REQUESTLOGGER = logging.getLogger("log_all_requests_of_testcases_to_file")
 REQUESTLOGGER.propagate = False
-REQUESTLOGGER.addHandler(pyhandle.util.NullHandler())
+REQUESTLOGGER.addHandler(util.NullHandler())
 
 
 class Searcher(object):
@@ -36,7 +36,7 @@ class Searcher(object):
 
     def __init__(self, **args):
 
-        pyhandle.util.log_instantiation(
+        util.log_instantiation(
             LOGGER, "Searcher", args, ["password", "reverselookup_password"]
         )
 
@@ -51,7 +51,7 @@ class Searcher(object):
             "allowed_search_keys",
             "HTTPS_verify",
         ]
-        pyhandle.util.add_missing_optional_args_with_value_none(args, optional_args)
+        util.add_missing_optional_args_with_value_none(args, optional_args)
 
         # Args that the constructor understands:
         self.__reverselookup_baseuri = None
@@ -67,7 +67,6 @@ class Searcher(object):
         self.__handle_system_password_used = False
         self.__revlookup_auth_string = None
         self.__header = None
-        self.__session = None
         self.__search_url = None
 
         # Defaults:
@@ -86,10 +85,7 @@ class Searcher(object):
     def __setup_search_access(self):
         self.__check_and_set_search_access()
         self.__session = requests.Session()
-        if self.__session is None:
-            LOGGER.debug("Search session could not be created.")
-        else:
-            LOGGER.debug("Search session was created.")
+        LOGGER.debug("Search session was created.")
 
     def __check_and_set_search_access(self):
         user_and_pw_exist = self.__check_and_set_search_authentication()
@@ -99,11 +95,9 @@ class Searcher(object):
             self.__has_search_access = True
 
     def __check_and_set_search_authentication(self):
-        user_and_pw_exst = False
-
         if self.__user is not None and self.__password is not None:
             self.__set_revlookup_auth_string(self.__user, self.__password)
-            self.__header = {"Authorization": "Basic " + self.__revlookup_auth_string}
+            self.__header = {"Authorization": f"Basic {self.__revlookup_auth_string}"}
             LOGGER.debug("Reverse lookup authentication is set.")
             return True
 
@@ -131,8 +125,8 @@ class Searcher(object):
                 + "/"
                 + self.__reverselookup_url_extension.strip("/")
             )
-            return True
             LOGGER.debug("Reverse lookup endpoint set to " + str(self.__search_url))
+            return True
         else:
             msg = "Reverse lookup not possible."
             if (
@@ -165,9 +159,7 @@ class Searcher(object):
         if (
             args["HTTPS_verify"] is not None
         ):  # Without this check, a passed "False" is not found!
-            self.__HTTPS_verify = pyhandle.util.get_valid_https_verify(
-                args["HTTPS_verify"]
-            )
+            self.__HTTPS_verify = util.get_valid_https_verify(args["HTTPS_verify"])
             LOGGER.debug(" - https_verify set to: " + str(self.__HTTPS_verify))
         else:
             self.__HTTPS_verify = defaults["HTTPS_verify"]
@@ -310,10 +302,10 @@ class Searcher(object):
             )
             raise ReverseLookupException(msg=msg)
         else:
-            isnone = pyhandle.util.return_keys_of_value_none(args)
+            isnone = util.return_keys_of_value_none(args)
             if len(isnone) > 0:
                 LOGGER.debug("search_handle: These keys had value None: " + str(isnone))
-                args = pyhandle.util.remove_value_none_from_dict(args)
+                args = util.remove_value_none_from_dict(args)
                 if len(args) == 0:
                     LOGGER.debug(
                         "search_handle: No key value pair with valid value was specified."
@@ -404,15 +396,13 @@ class Searcher(object):
         """
         LOGGER.debug("create_revlookup_query...")
 
-        allowed_search_keys = self.__allowed_search_keys
+        allowed_search_keys = self.__allowed_search_keys or []
         only_search_for_allowed_keys = False
         if len(allowed_search_keys) > 0:
             only_search_for_allowed_keys = True
 
         fulltext_searchterms_given = True
-        fulltext_searchterms = pyhandle.util.remove_value_none_from_list(
-            fulltext_searchterms
-        )
+        fulltext_searchterms = util.remove_value_none_from_list(fulltext_searchterms)
         if len(fulltext_searchterms) == 0:
             fulltext_searchterms_given = False
 
@@ -426,9 +416,7 @@ class Searcher(object):
             raise ReverseLookupException(msg=msg)
 
         keyvalue_searchterms_given = True
-        keyvalue_searchterms = pyhandle.util.remove_value_none_from_dict(
-            keyvalue_searchterms
-        )
+        keyvalue_searchterms = util.remove_value_none_from_dict(keyvalue_searchterms)
         if len(keyvalue_searchterms) == 0:
             keyvalue_searchterms_given = False
 
@@ -472,12 +460,15 @@ class Searcher(object):
         :param username: Username.
         :param password: Password.
         """
-        auth = pyhandle.utilhandle.create_authentication_string(username, password)
+        auth = utilhandle.create_authentication_string(username, password)
         self.__revlookup_auth_string = auth
 
     def __send_revlookup_get_request(self, query):
 
         solrurl = self.__search_url
+        if solrurl is None:
+            msg = "No URL for reverse lookup was provided"
+            raise ReverseLookupException(msg=msg, query=query)
         entirequery = solrurl + "?" + query.lstrip("?")
 
         head = self.__header
@@ -495,5 +486,5 @@ class Searcher(object):
         return resp
 
     def __log_request_response_to_file(self, **args):
-        message = pyhandle.utilhandle.make_request_log_message(**args)
+        message = utilhandle.make_request_log_message(**args)
         args["logger"].info(message)

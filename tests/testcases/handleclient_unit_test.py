@@ -43,7 +43,7 @@ class RESTHandleClientNoaccessTestCase(unittest.TestCase):
 
         # Try to create client instance for search without a search URL:
         with self.assertRaises(TypeError):
-            inst = RESTHandleClient.instantiate_for_read_and_search(
+            RESTHandleClient.instantiate_for_read_and_search(
                 None, "johndoe", "passywordy"
             )
 
@@ -51,7 +51,7 @@ class RESTHandleClientNoaccessTestCase(unittest.TestCase):
         # Try to ceate client instance with username and password
 
         with self.assertRaises(HandleSyntaxError):
-            inst = RESTHandleClient.instantiate_with_username_and_password(
+            RESTHandleClient.instantiate_with_username_and_password(
                 "someurl", "johndoe", "passywordy"
             )
 
@@ -110,7 +110,7 @@ class RESTHandleClientNoaccessTestCase(unittest.TestCase):
     def test_check_handle_syntax_none(self):
         """Test check handle syntax where handle is None"""
         with self.assertRaises(HandleSyntaxError):
-            syntax_checked = check_handle_syntax(None)
+            check_handle_syntax(None)
 
     def test_check_handle_syntax_with_index_nan(self):
         """Handle Syntax: Exception if index not a number."""
@@ -167,7 +167,7 @@ class RESTHandleClientNoaccessTestCase(unittest.TestCase):
         """Test exception if handle syntax is wrong (retrieve_handle_record_json)."""
 
         with self.assertRaises(HandleSyntaxError):
-            json_record = self.inst.retrieve_handle_record_json("testhandle")
+            self.inst.retrieve_handle_record_json("testhandle")
 
     def test_retrieve_handle_record_when_handle_is_None(self):
         """Test error when retrieving a handle record with a None input."""

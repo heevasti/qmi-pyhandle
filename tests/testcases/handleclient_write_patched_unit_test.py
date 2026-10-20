@@ -9,7 +9,15 @@ import mock
 
 from pyhandle.client.resthandleclient import RESTHandleClient
 from pyhandle.clientcredentials import PIDClientCredentials
-from pyhandle.handleexceptions import *
+from pyhandle.handleexceptions import (
+    BrokenHandleRecordException,
+    GenericHandleError,
+    HandleAlreadyExistsException,
+    HandleAuthenticationError,
+    HandleNotFoundException,
+    IllegalOperationException,
+    ReverseLookupException,
+)
 from pyhandle.utilhandle import check_handle_syntax
 from tests.mockresponses import MockResponse, MockSearchResponse
 from tests.utilities import failure_message, flattensort, replace_timestamps
@@ -83,7 +91,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         testlocation = "http://foo.bar"
         testchecksum = "123456"
         additional_URLs = None
-        handle_returned = self.inst.register_handle(
+        self.inst.register_handle(
             testhandle,
             location=testlocation,
             checksum=testchecksum,
@@ -192,7 +200,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
 
         # Run the code to be tested:
         testhandle = "my/testhandle"
-        handle_returned = self.inst.register_handle_kv(
+        self.inst.register_handle_kv(
             testhandle, URL="http://foo.bar", CHECKSUM="123456", FOO="foo", BAR="bar"
         )
 
@@ -267,7 +275,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
             {"index": 4, "type": "BAR", "data": "bar"},
         ]
 
-        handle_returned = self.inst.register_handle_json(testhandle, entries)
+        self.inst.register_handle_json(testhandle, entries)
 
         # Check if the PUT request was sent exactly once:
         self.assertEqual(
@@ -345,7 +353,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
             },
         ]
 
-        handle_returned = self.inst.register_handle_json(testhandle, entries)
+        self.inst.register_handle_json(testhandle, entries)
 
         # Check if the PUT request was sent exactly once:
         self.assertEqual(
@@ -399,7 +407,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         additional_URLs = ["http://bar.bar", "http://foo.foo"]
         # Run code to be tested + check exception:
         with self.assertRaises(NotImplementedError):
-            handle_returned = self.inst.register_handle(
+            self.inst.register_handle(
                 testhandle,
                 location=testlocation,
                 checksum=testchecksum,
@@ -448,7 +456,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         testchecksum = "123456"
         # additional_URLs = ['http://bar.bar', 'http://foo.foo']
         additional_URLs = None
-        handle_returned = newInst.register_handle(
+        newInst.register_handle(
             testhandle,
             location=testlocation,
             checksum=testchecksum,
@@ -589,7 +597,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         overwrite = True
         # additional_URLs = ['http://bar.bar', 'http://foo.foo']
         additional_URLs = None
-        handle_returned = self.inst.register_handle(
+        self.inst.register_handle(
             testhandle,
             location=testlocation,
             checksum=testchecksum,
@@ -716,7 +724,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         # Run the method to be tested:
         testlocation = "http://foo.bar"
         testchecksum = "123456"
-        handle_returned = self.inst.generate_and_register_handle(
+        self.inst.generate_and_register_handle(
             prefix="my", location=testlocation, checksum=testchecksum
         )
 
@@ -1830,7 +1838,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
 
         # Call method to be tested, assert exception
         with self.assertRaises(HandleNotFoundException):
-            resp = self.inst.delete_handle("my/testhandle")
+            self.inst.delete_handle("my/testhandle")
 
     def test_delete_handle_too_many_args(self):
 
@@ -1901,7 +1909,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         getpatch.return_value = mock_response_get
 
         # Setup client for searching with existent but wrong url (google.com):
-        inst = RESTHandleClient.instantiate_with_username_and_password(
+        RESTHandleClient.instantiate_with_username_and_password(
             "url_https",
             "100:user/name",
             "password",
@@ -1929,7 +1937,7 @@ class RESTHandleClientWriteaccessPatchedTestCase(unittest.TestCase):
         getpatch.return_value = mock_response_search
 
         # Setup client for searching with Handle Server url:
-        inst = RESTHandleClient.instantiate_with_username_and_password(
+        RESTHandleClient.instantiate_with_username_and_password(
             "url_https",
             "100:user/name",
             "password",

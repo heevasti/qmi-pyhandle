@@ -87,7 +87,7 @@ class RESTHandleConnectorNoaccessTestCase(unittest.TestCase):
     def test_init_cert_serverurl_missing(self):
 
         with self.assertRaises(TypeError):
-            inst = HandleSystemConnector(FILE_BOTH)
+            HandleSystemConnector(FILE_BOTH)
 
     def test_init_privatekey_missing(self):
 
@@ -106,7 +106,7 @@ class RESTHandleConnectorNoaccessTestCase(unittest.TestCase):
     def test_init_cert_onefile_wrongpath(self):
 
         with self.assertRaises(CredentialsFormatError):
-            inst = HandleSystemConnector(
+            HandleSystemConnector(
                 certificate_and_key=PATH_CRED + "/noexist.pem",
                 handle_server_url="http://foo.com",
             )

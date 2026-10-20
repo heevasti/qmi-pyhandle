@@ -141,14 +141,14 @@ class RESTHandleConnectorAccessPatchedTestCase(unittest.TestCase):
         headers = self.get_kw_attribute_from_mockresponse("headers", deletepatch)
 
         # Compare with expected payload:
-        self.assertEquals(
+        self.assertEqual(
             headers["Authorization"],
             'Handle clientCert="true"',
             "Authorization header not sent correctly: " + headers["Authorization"],
         )
 
     @mock.patch("requests.Session.delete")
-    def test_delete_request_via_cert(self, deletepatch):
+    def test_delete_request_via_cert_with_indices(self, deletepatch):
 
         # Define the replacement for the patched DELETE method:
         mock_response_del = MockResponse(success=True)

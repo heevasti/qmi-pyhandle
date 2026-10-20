@@ -47,8 +47,6 @@ class DBHandleAlreadyExistsException(Exception):
         # Default message:
         self.msg = "Handle already exists"
 
-        # Possible arguments:
-        optional_args = ["msg", "handle"]
         self.handle = args["handle"]
         self.custom_message = args["msg"]
 

@@ -11,8 +11,7 @@ import json
 import logging
 import os
 
-import pyhandle
-import pyhandle.util as util
+from pyhandle import util, utilhandle
 from pyhandle.handleexceptions import CredentialsFormatError
 
 LOGGER = logging.getLogger(__name__)
@@ -257,9 +256,9 @@ class PIDClientCredentials(object):
 
     def __check_handle_syntax(self):
         if self.__handleowner:
-            pyhandle.utilhandle.check_handle_syntax_with_index(self.__handleowner)
+            utilhandle.check_handle_syntax_with_index(self.__handleowner)
         if self.__username:
-            pyhandle.utilhandle.check_handle_syntax_with_index(self.__username)
+            utilhandle.check_handle_syntax_with_index(self.__username)
 
     def __check_file_existence(self):
 

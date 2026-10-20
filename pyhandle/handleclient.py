@@ -47,14 +47,12 @@ class PyHandleClient(object):
         :return: Instance of the client.
         """
 
-        for client in self.HANDLE_CLIENTS:
-            if client.check_client(self.client):
-                if self.client == "db":
-                    return client(self.credentials)
-                elif self.client == "batch":
-                    return client(batch_file_path=self.batch_file_path)
-                else:
-                    return client()
+        if DBHandleClient.check_client(self.client):
+            return DBHandleClient(self.credentials)
+        elif BatchHandleClient.check_client(self.client):
+            return BatchHandleClient(batch_file_path=self.batch_file_path)
+        elif RESTHandleClient.check_client(self.client):
+            return RESTHandleClient()
 
     def create_batch_file(self, overwrite=False):
         return self.handle_client.create_batch_file(overwrite)
@@ -110,7 +108,7 @@ class PyHandleClient(object):
 
     def register_handle(self, handle, location, overwrite=False, **extratypes):
         return self.handle_client.register_handle(
-            handle, location, overwrite, **extratypes
+            handle, location, overwrite=overwrite, **extratypes
         )
 
     def search_handle(self, pattern=None, **args):

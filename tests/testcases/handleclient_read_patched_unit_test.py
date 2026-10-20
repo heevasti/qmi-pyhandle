@@ -134,7 +134,6 @@ class RESTHandleClientReadaccessFakedTestCase(unittest.TestCase):
         """Test getting the indices for a specific key."""
 
         handlerecord = RECORD
-        handle = handlerecord["handle"]
 
         indices = self.inst.get_handlerecord_indices_for_key(
             "TEST1", handlerecord["values"]
@@ -146,7 +145,6 @@ class RESTHandleClientReadaccessFakedTestCase(unittest.TestCase):
         """Test getting the indices for a duplicate key."""
 
         handlerecord = RECORD
-        handle = handlerecord["handle"]
 
         indices = self.inst.get_handlerecord_indices_for_key(
             "TESTDUP", handlerecord["values"]
@@ -159,7 +157,6 @@ class RESTHandleClientReadaccessFakedTestCase(unittest.TestCase):
         """Test getting the indices for an inexistent key."""
 
         handlerecord = RECORD
-        handle = handlerecord["handle"]
 
         indices = self.inst.get_handlerecord_indices_for_key(
             "test100", handlerecord["values"]

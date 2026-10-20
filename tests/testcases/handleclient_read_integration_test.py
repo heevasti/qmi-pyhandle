@@ -8,7 +8,11 @@ import requests
 
 import pyhandle
 from pyhandle.client.resthandleclient import RESTHandleClient
-from pyhandle.handleexceptions import *
+from pyhandle.handleexceptions import (
+    GenericHandleError,
+    HandleNotFoundException,
+    HandleSyntaxError,
+)
 
 # Load some data that is needed for testing
 PATH_RES = pyhandle.util.get_neighbour_directory(__file__, "resources")
@@ -75,7 +79,7 @@ class RESTHandleClientReadaccessTestCase(unittest.TestCase):
 
         # Creating an instance that knows how to write:
         pw = self.testvalues["password"]
-        inst = RESTHandleClient.instantiate_with_username_and_password(
+        RESTHandleClient.instantiate_with_username_and_password(
             self.testvalues["handle_server_url_write"],
             self.user,
             pw,
@@ -116,7 +120,7 @@ class RESTHandleClientReadaccessTestCase(unittest.TestCase):
         veri = self.https_verify
         head = headers
         data = json.dumps({"values": list_of_all_entries})
-        resp = requests.put(url, data=data, headers=head, verify=veri)
+        requests.put(url, data=data, headers=head, verify=veri)
 
     # retrieve_handle_record_json
 
@@ -164,7 +168,7 @@ class RESTHandleClientReadaccessTestCase(unittest.TestCase):
     def test_get_value_from_handle_inexistent_record(self):
         """Test reading handle value from inexistent handle."""
         with self.assertRaises(HandleNotFoundException):
-            val = self.inst.get_value_from_handle(self.inexistent_handle, "anykey")
+            self.inst.get_value_from_handle(self.inexistent_handle, "anykey")
 
     # instantiate
 
@@ -184,7 +188,7 @@ class RESTHandleClientReadaccessTestCase(unittest.TestCase):
         # Run code to be tested + check exception:
         with self.assertRaises(HandleSyntaxError):
             # Create client instance with username and password
-            inst = RESTHandleClient.instantiate_with_username_and_password(
+            RESTHandleClient.instantiate_with_username_and_password(
                 self.url,
                 testusername_without_index,
                 self.randompassword,
@@ -198,7 +202,7 @@ class RESTHandleClientReadaccessTestCase(unittest.TestCase):
         # Run code to be tested + check exception:
         with self.assertRaises(HandleNotFoundException):
             # Create client instance with username and password
-            inst = RESTHandleClient.instantiate_with_username_and_password(
+            RESTHandleClient.instantiate_with_username_and_password(
                 self.url,
                 testusername_inexistent,
                 self.randompassword,
@@ -236,7 +240,7 @@ class RESTHandleClientReadaccessTestCase(unittest.TestCase):
         # Run code to be tested + check exception:
         # Create instance with credentials
         with self.assertRaises(HandleNotFoundException):
-            inst = RESTHandleClient.instantiate_with_credentials(
+            RESTHandleClient.instantiate_with_credentials(
                 credentials, HTTPS_verify=self.https_verify
             )
 
@@ -287,7 +291,7 @@ class RESTHandleClientReadaccessTestCase(unittest.TestCase):
             self.assertNotIn(
                 "/foo/", serverconn._HandleSystemConnector__REST_API_url_extension
             )
-            self.assertEquals(
+            self.assertEqual(
                 serverconn._HandleSystemConnector__REST_API_url_extension, valuebar
             )
 
@@ -328,7 +332,7 @@ class RESTHandleClientReadaccessTestCase(unittest.TestCase):
             self.assertIn(
                 "/foo/", serverconn._HandleSystemConnector__REST_API_url_extension
             )
-            self.assertEquals(
+            self.assertEqual(
                 serverconn._HandleSystemConnector__REST_API_url_extension, valuefoo
             )
 

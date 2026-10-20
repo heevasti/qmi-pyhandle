@@ -97,7 +97,7 @@ class RESTHandleClient(HandleClient):
             "\n" + 60 * "*" + "\nInstantiation of RESTHandleClient\n" + 60 * "*"
         )
 
-        if handle_server_url != None:
+        if handle_server_url is not None:
             args["handle_server_url"] = handle_server_url
 
         # Args that the constructor understands:
@@ -288,7 +288,7 @@ class RESTHandleClient(HandleClient):
         utilhandle.check_handle_syntax(handle)
 
         # Add url parameters (see Tech Manual)
-        if auth == True:
+        if auth is True:
             hs_options["auth"] = "true"
 
         if len(hs_options) > 0:
@@ -783,7 +783,7 @@ class RESTHandleClient(HandleClient):
         """
 
         # If already exists and can't be overwritten:
-        if overwrite == False:
+        if overwrite is False:
             handlerecord_json = self.retrieve_handle_record_json(handle)
             # Note: Adding "?auth=true" to this request makes no sense, as we are
             # talking to the primary server anyway.
@@ -899,7 +899,7 @@ class RESTHandleClient(HandleClient):
             # TODO: Is this behaviour desired?
 
         # If already exists and can't be overwritten:
-        if overwrite == False:
+        if overwrite is False:
             handlerecord_json = self.retrieve_handle_record_json(handle)
             # Note: Adding "?auth=true" to this request makes no sense, as we are
             # talking to the primary server anyway.
@@ -1297,5 +1297,5 @@ class RESTHandleClient(HandleClient):
         return indices
 
     def __log_request_response_to_file(self, **args):
-        message = util.make_request_log_message(**args)
+        message = utilhandle.make_request_log_message(**args)
         args["logger"].info(message)

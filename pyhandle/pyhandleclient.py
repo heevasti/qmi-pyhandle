@@ -7,7 +7,7 @@ class HandleClient(object):
     def retrieve_handle_record(self, handle):
         raise NotImplementedError()
 
-    def modify_handle_value(self, handle, ttl=None, add_if_not_exist=True, **kvpairs):
+    def modify_handle_value(self, handle, *args, **kwargs):
         raise NotImplementedError()
 
     def list_all_handles(self):
@@ -18,7 +18,7 @@ class HandleClient(object):
     ):
         raise NotImplementedError()
 
-    def delete_handle_value(self, handle, key):
+    def delete_handle_value(self, handle, *args, **kwargs):
         raise NotImplementedError()
 
     def delete_handle(self, handle):
@@ -44,7 +44,7 @@ class HandleClient(object):
     def instantiate_with_credentials(self, credentials, **config):
         raise NotImplementedError()
 
-    def register_handle(self, handle, url, overwrite=False, **args):
+    def register_handle(self, handle, *args, **kwargs):
         raise NotImplementedError()
 
     def add_admin_entry(self, handle, admin_handle, admin_handle_index, perm):
@@ -65,7 +65,7 @@ class HandleClient(object):
     def authenticate_pubkey(self, user, priv_key_path, passphrase=None):
         raise NotImplementedError()
 
-    def search_handle(self, pattern=None, **args):
+    def search_handle(self, *args, **kwargs):
         raise NotImplementedError()
 
     def search_handle_multiple_keys(self, **args):

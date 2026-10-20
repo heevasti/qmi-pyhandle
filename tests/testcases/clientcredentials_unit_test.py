@@ -77,7 +77,7 @@ class PIDClientCredentialsTestCase(unittest.TestCase):
     def test_credentials_invalid_username(self):
         """Exception occurs when user name is not index:prefix/suffix."""
         with self.assertRaises(HandleSyntaxError):
-            inst = PIDClientCredentials(
+            PIDClientCredentials(
                 handle_server_url=self.url,
                 username=self.handle,
                 password=self.randompassword,
@@ -86,7 +86,7 @@ class PIDClientCredentialsTestCase(unittest.TestCase):
     def test_credentials_invalid_handleowner(self):
         """Exception occurs when handle owner is not index:prefix/suffix."""
         with self.assertRaises(HandleSyntaxError):
-            inst = PIDClientCredentials(
+            PIDClientCredentials(
                 handle_server_url=self.url,
                 username=self.handle,
                 password=self.randompassword,

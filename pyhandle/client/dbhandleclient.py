@@ -11,6 +11,8 @@ import sys
 import uuid
 
 import pymysql
+import pymysql.connections
+import pymysql.cursors
 
 from pyhandle.clientcredentials import PIDClientCredentials
 from pyhandle.dbhsexceptions import (
@@ -29,8 +31,8 @@ LOGGER.addHandler(util.NullHandler())
 
 
 class DBHandleClient(HandleClient):
-    _handle_db_connection = None
-    _handle_db_cur = None
+    _handle_db_connection: pymysql.connections.Connection
+    _handle_db_cur: pymysql.cursors.Cursor
     HANDLE_CLIENT = "db"
 
     def __init__(self, credentials, **args):
@@ -60,10 +62,10 @@ class DBHandleClient(HandleClient):
 
         try:
             self._handle_db_connection = pymysql.connect(
-                self.db_host,
-                self.db_user,
-                self.db_password,
-                self.db_name,
+                host=self.db_host,
+                user=self.db_user,
+                password=self.db_password,
+                database=self.db_name,
                 cursorclass=pymysql.cursors.DictCursor,
             )
             self._handle_db_cur = self._handle_db_connection.cursor()
@@ -88,10 +90,9 @@ class DBHandleClient(HandleClient):
         self.query = query
 
         try:
-            with self._handle_db_cur as cursor:
-                self_handle_db_cur = self._handle_db_connection.cursor()
-                self_handle_db_cur.execute(self.query)
-                result = self_handle_db_cur.fetchall()
+            with self._handle_db_connection.cursor() as cursor:
+                cursor.execute(self.query)
+                result = cursor.fetchall()
             self._handle_db_connection.commit()
             LOGGER.debug("Query result %s", result)
 
@@ -286,8 +287,6 @@ class DBHandleClient(HandleClient):
             "HS_VLIST",
             "HS_SERV",
         ]
-        all_keys = list(set().union(*(d.keys() for d in query_result)))
-
         skip = False
         for key in range(len(query_result)):
             skiped_key = query_result[key]["type"].decode("utf-8")
@@ -367,9 +366,7 @@ class DBHandleClient(HandleClient):
         LOGGER.debug("generate_and_register_handle...")
 
         handle = self.generate_PID_name(prefix)
-        handle = self.register_handle(
-            handle, location, checksum, overwrite=True, **extratypes
-        )
+        handle = self.register_handle(handle, location, overwrite=True, **extratypes)
 
         return handle
 
@@ -506,7 +503,7 @@ class DBHandleClient(HandleClient):
             self.execute_query(query)
         else:
             msg = "Handle does not exists"
-            raise DBHandleNotFoundException(handle=handle)
+            raise DBHandleNotFoundException(handle=handle, msg=msg)
 
     def delete_handle_value(self, handle, key):
         """
@@ -589,7 +586,7 @@ class DBHandleClient(HandleClient):
             handle_records = self.execute_query(query)
         else:
             msg = "Handle not found"
-            raise DBHandleNotFoundException(handle=handle)
+            raise DBHandleNotFoundException(handle=handle, msg=msg)
 
         handle_records_as_dict = self.convert_query_result_to_dict(handle_records)
         return handle_records_as_dict
@@ -792,8 +789,6 @@ class DBHandleClient(HandleClient):
         handle_record = self.retrieve_handle_record_without_HS_values(self.handle)
         handle_key = kvpairs["handle_key"]
 
-        value_exists = False
-
         if handle_key[0] in handle_record.keys():
             return True
         else:
@@ -915,7 +910,7 @@ class DBHandleClient(HandleClient):
 
         num_of_bits = 12
 
-        hsadmin = ""
+        hsadmin = b""
 
         handle_records = self.retrieve_handle_record_without_HS_values(handle)
 

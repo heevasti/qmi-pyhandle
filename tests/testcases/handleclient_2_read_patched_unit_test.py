@@ -31,7 +31,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
 
     # retrieve_handle_record_json:
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_retrieve_handle_record_json_normal(self, getpatch):
         """Test if retrieve_handle_record_json returns the correct things.."""
 
@@ -47,7 +47,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
         received = self.inst.retrieve_handle_record_json(expected["handle"])
         self.assertEqual(received, expected, "Unexpected return from handle retrieval.")
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_retrieve_handle_record_json_handle_does_not_exist(self, getpatch):
         """Test return value (None) if handle does not exist (retrieve_handle_record_json)."""
 
@@ -66,7 +66,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
             + str(json_record),
         )
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_retrieve_handle_record_json_handle_empty(self, getpatch):
         """Test return value if handle is empty (retrieve_handle_record_json)."""
 
@@ -85,7 +85,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
             "Unexpected return value: " + str(json_record),
         )
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_retrieve_handle_record_json_genericerror(self, getpatch):
         """Test exception if retrieve_handle_record_json returns a strange HTTP code."""
 
@@ -98,12 +98,12 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
 
         # Call method and check result:
         with self.assertRaises(GenericHandleError):
-            json_record = self.inst.retrieve_handle_record_json(testhandle)
+            self.inst.retrieve_handle_record_json(testhandle)
 
     # retrieve_handle_record:
 
     # @mock.patch('pyhandle.handleclient.RESTHandleClient._EUDATHandleClient__send_handle_get_request')
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_retrieve_handle_record_when_json_not_given(self, getpatch):
         """Test retrieving a handle record"""
 
@@ -154,14 +154,13 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
             "The record should have a length of 5 (as the duplicate is ignored.",
         )
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
-    def test_retrieve_handle_record_when_handle_is_wrong(self, getpatch):
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
+    def test_retrieve_handle_record_when_handle_does_not_match_record(self, getpatch):
         """Test error when retrieving a handle record with contradicting inputs."""
 
         # Test variable
         testhandle = "something/else"
         handlerecord_string = RECORD
-        handlerecord_json = json.loads(handlerecord_string)
 
         # Define the replacement for the patched method:
         mock_response = MockResponse(success=True, content=handlerecord_string)
@@ -171,7 +170,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
         with self.assertRaises(GenericHandleError):
             self.inst.retrieve_handle_record(testhandle)
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_retrieve_handle_record_when_handle_is_None(self, getpatch):
         """Test error when retrieving a handle record with a None input."""
 
@@ -182,7 +181,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
         with self.assertRaises(HandleSyntaxError):
             self.inst.retrieve_handle_record(testhandle)
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_retrieve_handle_record_when_handle_is_wrong(self, getpatch):
         """Test error when retrieving a nonexistent handle record."""
 
@@ -199,7 +198,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
             hrec, "The handle record for a nonexistent handle should be None!"
         )
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_retrieve_handle_record_when_handlerecord_is_None(self, getpatch):
         """Test error when retrieving a handle record, giving a None type."""
 
@@ -253,7 +252,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
 
     # get_value_from_handle
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_get_value_from_handle_when_handle_inexistent(self, getpatch):
         """Test error when retrieving a handle record, giving a None type."""
 
@@ -271,7 +270,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
 
         # Instantiation
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_instantiate_with_username_and_password_wrongpw(self, getpatch):
 
         # Define the replacement for the patched method:
@@ -284,7 +283,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
 
         self.assertIsInstance(inst, RESTHandleClient)
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_instantiate_with_username_and_password_inexistentuser(self, getpatch):
 
         # Define the replacement for the patched method:
@@ -292,11 +291,11 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
         getpatch.return_value = mock_response
 
         with self.assertRaises(HandleNotFoundException):
-            inst = RESTHandleClient.instantiate_with_username_and_password(
+            RESTHandleClient.instantiate_with_username_and_password(
                 "http://someurl", "100:john/doe", "passywordy"
             )
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_instantiate_with_credentials_inexistentuser(self, getpatch):
         """Test instantiation of client: Exception if username does not exist."""
 
@@ -316,12 +315,12 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
         # Run code to be tested + check exception:
         # Create instance with credentials
         with self.assertRaises(HandleNotFoundException):
-            inst = RESTHandleClient.instantiate_with_credentials(credentials)
+            RESTHandleClient.instantiate_with_credentials(credentials)
 
         # If the user name has no index, exception is already thrown in credentials creation!
         # self.assertRaises(HandleSyntaxError, pyhandle.PIDClientCredentials, 'url', 'prefix/suffix', randompassword)
 
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_instantiate_with_credentials(self, getpatch):
         """Test instantiation of client: No exception if password wrong."""
 
@@ -371,7 +370,7 @@ class RESTHandleClientReadaccessPatchedTestCase(unittest.TestCase):
     @mock.patch(
         "pyhandle.handlesystemconnector.HandleSystemConnector.check_if_username_exists"
     )
-    @mock.patch("pyhandle.handleclient.requests.Session.get")
+    @mock.patch("pyhandle.handlesystemconnector.requests.Session.get")
     def test_instantiate_with_credentials_config_override(self, getpatch, checkpatch):
         """Test instantiation of client: We pass a config value in the credentials
         and also as an arg in the instantiation. We want the latter to override the

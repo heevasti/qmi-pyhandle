@@ -28,7 +28,7 @@ from .testcases.utilconfig_unit_test import UtilConfigTestCase
 
 # Logging:
 log_pyhandle = False
-if log_pyhandle == True:
+if log_pyhandle:
     LOGGER = logging.getLogger()
     LOGGER.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler(

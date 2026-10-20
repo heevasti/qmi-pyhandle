@@ -6,7 +6,9 @@ import unittest
 
 import pyhandle
 from pyhandle.handleclient import RESTHandleClient
-from pyhandle.handleexceptions import *
+from pyhandle.handleexceptions import (
+    ReverseLookupException,
+)
 from tests.utilities import log_end_test_code, log_new_case, log_start_test_code
 
 REQUESTLOGGER = logging.getLogger("log_all_requests_of_testcases_to_file")

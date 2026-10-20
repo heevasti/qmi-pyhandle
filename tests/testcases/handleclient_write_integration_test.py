@@ -8,7 +8,12 @@ import requests
 
 import pyhandle
 from pyhandle.client.resthandleclient import RESTHandleClient
-from pyhandle.handleexceptions import *
+from pyhandle.handleexceptions import (
+    BrokenHandleRecordException,
+    HandleAlreadyExistsException,
+    HandleAuthenticationError,
+    IllegalOperationException,
+)
 from pyhandle.handlesystemconnector import HandleSystemConnector
 from tests.utilities import (
     log_end_test_code,
@@ -613,7 +618,6 @@ class RESTHandleClientWriteaccessTestCase(unittest.TestCase):
         log_new_case("test_delete_handle_inexistent")
 
         # Test variables
-        testhandle = self.inexistent_handle
 
         # Run code to be tested:
         log_start_test_code()
